@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website dari Google Sheets</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        img {
+            max-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daftar Produk</h1>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Nama Produk</th>
+                <th>Deskripsi Produk</th>
+                <th>Harga</th>
+                <th>Gambar</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/1X3kgt-xX72N3zRtOb9vKXcLJJwEXAMPLE/gviz/tq?tqx=out:csv&sheet=Sheet1';
+
+        fetch(sheetUrl)
+            .then(response => response.text())
+            .then(csvData => {
+                const rows = csvData.split('\n').slice(1); // Hapus baris pertama (header CSV)
+                const tableBody = document.querySelector('#data-table tbody');
+
+                rows.forEach(row => {
+                    const cols = row.split(',');
+                    const newRow = document.createElement('tr');
+
+                    cols.forEach((col, index) => {
+                        const cell = document.createElement('td');
+                        // Jika kolom adalah gambar (kolom ke-4)
+                        if (index === 3) {
+                            const img = document.createElement('img');
+                            img.src = col.trim(); // Gambar ada di kolom ke-4
+                            cell.appendChild(img);
+                        } else {
+                            cell.textContent = col.trim(); // Isi data
+                        }
+                        newRow.appendChild(cell);
+                    });
+
+                    tableBody.appendChild(newRow);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
